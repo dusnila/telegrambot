@@ -17,7 +17,8 @@ type Client struct {
 }
 
 const (
-	getUpdatesMethod = "getUpdates"
+	getUpdatesMethod  = "getUpdates"
+	sendMessageMethod = "sendUpdates"
 )
 
 func New(host string, token string) Client {
@@ -54,6 +55,19 @@ func (c *Client) Updates(offset int, limit int) (updates []Update, err error) {
 	return res.Result, nil
 }
 
+func (c *Client) SendMessage(chatID int, text string) error {
+	q := url.Values{}
+	q.Add("chat_id", strconv.Itoa(chatID))
+	q.Add("text", text)
+
+	_, err := c.doRequest(sendMessageMethod, q)
+	if err != nil {
+		return er.Wrap("can't send message", err)
+	}
+
+	return nil
+}
+
 func (c *Client) doRequest(method string, query url.Values) (data []byte, err error) {
 	defer func() { err = er.WrapIfErr("can't do request:", err) }()
 
@@ -83,8 +97,4 @@ func (c *Client) doRequest(method string, query url.Values) (data []byte, err er
 	}
 
 	return body, nil
-}
-
-func (c *Client) SendMessage() {
-
 }
