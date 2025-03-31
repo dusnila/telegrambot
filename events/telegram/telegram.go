@@ -66,6 +66,7 @@ func (p *Processor) processMessage(event events.Event) error {
 	if err != nil {
 		return er.Wrap("can't process message", err)
 	}
+
 }
 
 func meta(event events.Event) (Meta, error) {
